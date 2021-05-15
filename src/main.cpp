@@ -156,7 +156,17 @@ int main(int argc, char **argv){
 void initialize(SDL_Renderer *renderer, AppData *data_ptr)
 {
 
+    SDL_Color color = {.r = 255, .g = 255, .b = 255}; //init screen to white
     data_ptr->font = TTF_OpenFont("resrc/OpenSans-Regular.ttf", 24);
+
+    for (entry e : data_ptr->entries) 
+    {
+        //create texture for file anme
+
+        //create texture for file image
+    }
+
+    //I believe that we'll need to move code below into loop for all entries
 
     SDL_Surface *directorySurface = IMG_Load("resrc/images/directory.png");
     data_ptr->directory = SDL_CreateTextureFromSurface(renderer, directorySurface);
