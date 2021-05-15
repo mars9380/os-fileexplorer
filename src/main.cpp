@@ -121,19 +121,31 @@ int main(int argc, char **argv)
 void initialize(SDL_Renderer *renderer, AppData *data_ptr)
 {
 
+    data_ptr->font = TTF_OpenFont("resrc/OpenSans-Regular.ttf", 24);
+
     SDL_Surface *directorySurface = IMG_Load("resrc/images/directory.png");
+    data_ptr->directory = SDL_CreateTextureFromSurface(renderer, directorySurface);
+    SDL_FreeSurface(directorySurface);
 
     SDL_Surface *executableSurface = IMG_Load("resrc/images/executable.png");
+    data_ptr->executable = SDL_CreateTextureFromSurface(renderer, executableSurface);
+    SDL_FreeSurface(executableSurface);
 
     SDL_Surface *imageSurface = IMG_Load("resrc/images/image.png");
+    data_ptr->image = SDL_CreateTextureFromSurface(renderer, imageSurface);
+    SDL_FreeSurface(imageSurface);
 
     SDL_Surface *videoSurface = IMG_Load("resrc/images/video.png");
+    data_ptr->video = SDL_CreateTextureFromSurface(renderer, videoSurface);
+    SDL_FreeSurface(videoSurface);
 
     SDL_Surface *codeSurface = IMG_Load("resrc/images/code.png");
+    data_ptr->code = SDL_CreateTextureFromSurface(renderer, codeSurface);
+    SDL_FreeSurface(codeSurface);
 
     SDL_Surface *otherSurface = IMG_Load("resrc/images/other.png");
-
-
+    data_ptr->other = SDL_CreateTextureFromSurface(renderer, otherSurface);
+    SDL_FreeSurface(otherSurface);
 
     // data_ptr->font = TTF_OpenFont("resrc/OpenSans-Regular.ttf", 24);
  
