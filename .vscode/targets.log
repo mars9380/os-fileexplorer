@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Fri May 14 15:47:31 2021
+# Make data base, printed on Sat May 15 12:52:37 2021
 
 # Variables
 
@@ -38,7 +38,6 @@ IM_CONFIG_PHASE = 1
 XAUTHORITY = /run/user/1000/gdm/Xauthority
 # environment
 GDMSESSION = ubuntu
- 
 # environment
 XMODIFIERS = @im=ibus
 # makefile
@@ -126,7 +125,7 @@ XDG_SESSION_DESKTOP = ubuntu
 # environment
 SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 3574
+GIO_LAUNCHED_DESKTOP_FILE_PID = 13724
 # automatic
 %F = $(notdir $%)
 # environment
@@ -192,7 +191,7 @@ BINDIR = bin
 # environment
 GNOME_SHELL_SESSION_MODE = ubuntu
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-aaed1ab3-8129-4df0-8425-5fd5c8223390.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-0074a9c7-6bb7-4ffc-a537-d7bae0a0e93b.sock
 # makefile (from 'Makefile', line 12)
 EXEC = $(addprefix $(BINDIR)/, fileexplorer)
 # default
@@ -276,8 +275,9 @@ GJS_DEBUG_OUTPUT = stderr
 # environment
 LANG = C
 # environment
-VSCODE_PID = 3620
+VSCODE_PID = 13770
 # variable set hash-table stats:
+ 
 # Load=133/1024=13%, Rehash=0, Collisions=29/177=16%
 
 # Pattern-specific Variable Values
@@ -313,7 +313,7 @@ all: bin/fileexplorer
 obj/main.o: src/main.cpp
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'main'
-#  Last modified 2021-05-13 18:31:01.665769371
+#  Last modified 2021-05-14 23:02:14.639229648
 #  File has been updated.
 #  Needs to be updated (-q is set).
 # automatic
@@ -346,7 +346,7 @@ Makefile:
 
 bin/fileexplorer: obj/main.o
 #  Implicit rule search has not been done.
-#  Last modified 2021-05-13 18:31:01.773769409
+#  Last modified 2021-05-14 23:02:14.739230114
 #  File has been updated.
 #  Needs to be updated (-q is set).
 # variable set hash-table stats:
@@ -370,7 +370,7 @@ clean:
 # Not a target:
 src/main.cpp:
 #  Implicit rule search has been done.
-#  Last modified 2021-05-13 19:02:59.314961686
+#  Last modified 2021-05-14 23:11:14.309603818
 #  File has been updated.
 #  Successfully updated.
 
@@ -388,6 +388,6 @@ src/main.cpp:
 # strcache performance: lookups = 35 / hit rate = 31%
 # hash-table stats:
 # Load=24/8192=0%, Rehash=0, Collisions=1/35=3%
-# Finished Make data base on Fri May 14 15:47:31 2021
+# Finished Make data base on Sat May 15 12:52:37 2021
 
  

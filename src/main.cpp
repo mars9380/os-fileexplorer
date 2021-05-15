@@ -33,15 +33,31 @@ typedef struct AppData {
 void initialize(SDL_Renderer *renderer, AppData *data_ptr);
 void render(SDL_Renderer *renderer, AppData *data_ptr);
 void quit(AppData *data_ptr);
-void getDirectoryContents(std::string dirPath);
+std::vector<std::string> getDirectoryContentInfo(std::string dirPath);
 std::string getFileType(std::string fileName);
 
-int main(int argc, char **argv)
-{
+void splitString(std::string text, char d, std::vector<std::string>& result);
+
+int main(int argc, char **argv){
     char *home = getenv("HOME");
     printf("HOME: %s\n", home);
  
-    getDirectoryContents(home);
+    std::vector<std::string> directoryContents = getDirectoryContentInfo(home);
+
+
+    std::vector<std::string> entry;
+
+    // prints FileType | FileName | FilePath | IconPath
+    for (int i = 0; i < directoryContents.size(); i++){
+        splitString(directoryContents[i], '|', entry);
+        for (int j = 0; j < entry.size(); j++){
+            std::cout << entry[j] << " | ";
+        }
+        std::cout << "\n";
+    }
+
+
+
     // // initializing SDL as Video
     // SDL_Init(SDL_INIT_VIDEO);
     // IMG_Init(IMG_INIT_PNG);
@@ -191,7 +207,9 @@ void quit(AppData *data_ptr)
 }
 
 
-void getDirectoryContents(std::string dirPath){
+std::vector<std::string> getDirectoryContentInfo(std::string dirPath){
+
+    std::vector<std::string> contentInfo;
 
     std::vector<std::string> filesInDir;
 
@@ -213,11 +231,13 @@ void getDirectoryContents(std::string dirPath){
         }
         closedir(dir);
     } else {
-        //not dir?
+        contentInfo.push_back(std::string("ERROR: entry path is not a directory"));
+        return contentInfo;
     }
     std::sort(filesInDir.begin(), filesInDir.end());
 
     std::string filePath;
+    std::string imagePath;
     std::string fileName;
     struct stat file;
     for (int i = 0; i < filesInDir.size(); i++){
@@ -225,21 +245,28 @@ void getDirectoryContents(std::string dirPath){
         fileName = filesInDir[i];
         filePath = dirPath + "/" + filesInDir[i];
         stat(filePath.c_str(), &file);
-
+// make this return a string thats equals filetype | filepath | imagepath
         if (S_ISDIR(file.st_mode)){
-            std::cout << fileName << " | " <<  "Directory\n";
+            imagePath = "../resrc/images/directory.png";
+            contentInfo.push_back(std::string("Directory|" + fileName + "|" + filePath + "|" + imagePath));
         } else if (file.st_mode & S_IXUSR){
-            std::cout << fileName << " | " << "Executable\n";
+            imagePath = "../resrc/images/executable.png";
+            contentInfo.push_back(std::string("Executable|" + fileName + "|" + filePath + "|" + imagePath));
         } else if (getFileType(fileName) == std::string("Image")){
-            std::cout << fileName << " | " << getFileType(fileName) << "\n";
+            imagePath = "../resrc/images/image.png";
+            contentInfo.push_back(std::string(getFileType(fileName) + "|" + fileName + "|" + filePath + "|" + imagePath));
         } else if (getFileType(fileName) == std::string("Video")){
-            std::cout << fileName << " | " << getFileType(fileName) << "\n";
+            imagePath = "../resrc/images/video.png";
+            contentInfo.push_back(std::string(getFileType(fileName) + "|" + fileName + "|" + filePath + "|" + imagePath));
         } else if (getFileType(fileName) == std::string("Code file")){
-            std::cout << fileName << " | " << getFileType(fileName) << "\n";
+            imagePath = "../resrc/images/code.png";
+            contentInfo.push_back(std::string(getFileType(fileName) + "|" + fileName + "|" + filePath + "|" + imagePath));
         } else {
-            std::cout << fileName << " | " << getFileType(fileName) << "\n";
+            imagePath = "../resrc/images/other.png";
+            contentInfo.push_back(std::string(getFileType(fileName) + "|" + fileName + "|" + filePath + "|" + imagePath));
         }
     }
+    return contentInfo;
 }
 
 std::string getFileType(std::string fileName){
@@ -261,5 +288,60 @@ std::string getFileType(std::string fileName){
         }
     } else {
         return std::string("ERROR: file extension error");
+    }
+}
+
+void splitString(std::string text, char d, std::vector<std::string>& result){
+    enum states { NONE, IN_WORD, IN_STRING } state = NONE;
+
+    int i;
+    std::string token;
+    result.clear();
+    for (i = 0; i < text.length(); i++)
+    {
+        char c = text[i];
+        switch (state) {
+            case NONE:
+                if (c != d)
+                {
+                    if (c == '\"')
+                    {
+                        state = IN_STRING;
+                        token = "";
+                    }
+                    else
+                    {
+                        state = IN_WORD;
+                        token = c;
+                    }
+                }
+                break;
+            case IN_WORD:
+                if (c == d)
+                {
+                    result.push_back(token);
+                    state = NONE;
+                }
+                else
+                {
+                    token += c;
+                }
+                break;
+            case IN_STRING:
+                if (c == '\"')
+                {
+                    result.push_back(token);
+                    state = NONE;
+                }
+                else
+                {
+                    token += c;
+                }
+                break;
+        }
+    }
+    if (state != NONE)
+    {
+        result.push_back(token);
     }
 }
