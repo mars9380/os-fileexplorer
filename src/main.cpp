@@ -13,7 +13,26 @@
 #define WIDTH 800
 #define HEIGHT 600
  
+typedef struct entry {
+    std::string path;
+    std::string type;
+    
+    //textures
+    SDL_Texture *file_name_t;
+    SDL_Texture *icon_texture_t;
+    SDL_Texture *file_size_t;
+
+    //rects
+    SDL_Rect file_name_r;
+    SDL_Rect icon_texture_r;
+    SDL_Rect file_size_r;
+} entry;
+ 
 typedef struct AppData {
+
+    //need a vector of different entries in file
+    std::vector<entry> entries;
+
     TTF_Font *font;
     SDL_Texture *directory;
     SDL_Texture *executable;
