@@ -28,7 +28,8 @@ void initialize(SDL_Renderer *renderer, AppData *data_ptr);
 void render(SDL_Renderer *renderer, AppData *data_ptr);
 void quit(AppData *data_ptr);
 void getDirectoryContents(std::string dirPath);
- 
+std::string getFileType(std::string fileName);
+
 int main(int argc, char **argv)
 {
     char *home = getenv("HOME");
@@ -158,8 +159,6 @@ void quit(AppData *data_ptr)
 
 
 void getDirectoryContents(std::string dirPath){
-    // struct stat homeDir;
-    // stat(home, &homeDir);
 
     std::vector<std::string> filesInDir;
 
@@ -185,8 +184,49 @@ void getDirectoryContents(std::string dirPath){
     }
     std::sort(filesInDir.begin(), filesInDir.end());
 
-
+    std::string filePath;
+    std::string fileName;
+    struct stat file;
     for (int i = 0; i < filesInDir.size(); i++){
-        std::cout << filesInDir[i] << "\n";
+
+        fileName = filesInDir[i];
+        filePath = dirPath + "/" + filesInDir[i];
+        stat(filePath.c_str(), &file);
+
+        if (S_ISDIR(file.st_mode)){
+            std::cout << fileName << " | " <<  "Directory\n";
+        } else if (file.st_mode & S_IXUSR){
+            std::cout << fileName << " | " << "Executable\n";
+        } else if (getFileType(fileName) == std::string("Image")){
+            std::cout << fileName << " | " << getFileType(fileName) << "\n";
+        } else if (getFileType(fileName) == std::string("Video")){
+            std::cout << fileName << " | " << getFileType(fileName) << "\n";
+        } else if (getFileType(fileName) == std::string("Code file")){
+            std::cout << fileName << " | " << getFileType(fileName) << "\n";
+        } else {
+            std::cout << fileName << " | " << getFileType(fileName) << "\n";
+        }
+    }
+}
+
+std::string getFileType(std::string fileName){
+    if (fileName.c_str() != ".."){
+        int dotIndex = fileName.find_first_of('.');
+        if (dotIndex > 0 && dotIndex < fileName.size() - 1){
+            std::string fileExt = fileName.substr(dotIndex, fileName.size() - 1);
+            if (fileExt == ".jpg" || fileExt == ".jpeg" || fileExt == ".png" || fileExt == ".tif" || fileExt == ".tiff" || fileExt == ".gif"){
+                return std::string("Image");
+            } else if (fileExt == ".mp3" || fileExt == ".mp4" || fileExt == ".mov" || fileExt == ".mkv" || fileExt == ".avi" || fileExt == ".webm"){
+                return std::string("Video");
+            } else if (fileExt == ".h" || fileExt == ".c" || fileExt == ".cpp" || fileExt == ".py" || fileExt == ".java" || fileExt == ".js"){
+                return std::string("Code file");
+            } else {
+                return std::string("Other");
+            }
+        } else {
+            return std::string("ERROR: file extension error");
+        }
+    } else {
+        return std::string("ERROR: file extension error");
     }
 }
