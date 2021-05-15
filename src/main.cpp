@@ -15,6 +15,12 @@
  
 typedef struct AppData {
     TTF_Font *font;
+    SDL_Texture *directory;
+    SDL_Texture *executable;
+    SDL_Texture *image;
+    SDL_Texture *video;
+    SDL_Texture *code;
+    SDL_Texture *other;
     SDL_Texture *penguin;
     SDL_Texture *phrase;
     SDL_Rect penguin_rect;
@@ -114,25 +120,40 @@ int main(int argc, char **argv)
  
 void initialize(SDL_Renderer *renderer, AppData *data_ptr)
 {
-    data_ptr->font = TTF_OpenFont("resrc/OpenSans-Regular.ttf", 24);
+
+    SDL_Surface *directorySurface = IMG_Load("resrc/images/directory.png");
+
+    SDL_Surface *executableSurface = IMG_Load("resrc/images/executable.png");
+
+    SDL_Surface *imageSurface = IMG_Load("resrc/images/image.png");
+
+    SDL_Surface *videoSurface = IMG_Load("resrc/images/video.png");
+
+    SDL_Surface *codeSurface = IMG_Load("resrc/images/code.png");
+
+    SDL_Surface *otherSurface = IMG_Load("resrc/images/other.png");
+
+
+
+    // data_ptr->font = TTF_OpenFont("resrc/OpenSans-Regular.ttf", 24);
  
-    SDL_Surface *img_surf = IMG_Load("resrc/images/linux-penguin.png");
-    data_ptr->penguin = SDL_CreateTextureFromSurface(renderer, img_surf);
-    SDL_FreeSurface(img_surf);
-    data_ptr->penguin_rect.x = 200;
-    data_ptr->penguin_rect.y = 100;
-    data_ptr->penguin_rect.w = 165;
-    data_ptr->penguin_rect.h = 200;
-    data_ptr->penguin_selected = false;
+    // SDL_Surface *img_surf = IMG_Load("resrc/images/linux-penguin.png");
+    // data_ptr->penguin = SDL_CreateTextureFromSurface(renderer, img_surf);
+    // SDL_FreeSurface(img_surf);
+    // data_ptr->penguin_rect.x = 200;
+    // data_ptr->penguin_rect.y = 100;
+    // data_ptr->penguin_rect.w = 165;
+    // data_ptr->penguin_rect.h = 200;
+    // data_ptr->penguin_selected = false;
  
-    SDL_Color color = { 0, 0, 0 };
-    SDL_Surface *phrase_surf = TTF_RenderText_Solid(data_ptr->font, "Hello World!", color);
-    data_ptr->phrase = SDL_CreateTextureFromSurface(renderer, phrase_surf);
-    SDL_FreeSurface(phrase_surf);
-    data_ptr->phrase_rect.x = 10;
-    data_ptr->phrase_rect.y = 500;
-    SDL_QueryTexture(data_ptr->phrase, NULL, NULL, &(data_ptr->phrase_rect.w), &(data_ptr->phrase_rect.h));
-    data_ptr->phrase_selected = false;
+    // SDL_Color color = { 0, 0, 0 };
+    // SDL_Surface *phrase_surf = TTF_RenderText_Solid(data_ptr->font, "Hello World!", color);
+    // data_ptr->phrase = SDL_CreateTextureFromSurface(renderer, phrase_surf);
+    // SDL_FreeSurface(phrase_surf);
+    // data_ptr->phrase_rect.x = 10;
+    // data_ptr->phrase_rect.y = 500;
+    // SDL_QueryTexture(data_ptr->phrase, NULL, NULL, &(data_ptr->phrase_rect.w), &(data_ptr->phrase_rect.h));
+    // data_ptr->phrase_selected = false;
 }
  
 void render(SDL_Renderer *renderer, AppData *data_ptr)
