@@ -1,3 +1,10 @@
+#include <iostream>
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <sys/stat.h>
+#include <string>
+#include <vector>
 #include <dirent.h>
 #include <algorithm>
 #include <unistd.h>
