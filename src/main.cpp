@@ -1,14 +1,6 @@
-// image use: https://icons8.com - Icons, illustrations, photos, music, and design tools . . .
-
-#include <iostream>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <sys/stat.h>
-#include <string>
-#include <vector>
 #include <dirent.h>
 #include <algorithm>
+#include <unistd.h>
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -56,6 +48,7 @@ std::vector<std::string> getDirectoryContentInfo(std::string dirPath);
 std::string getFileType(std::string fileName);
 
 void splitString(std::string text, char d, std::vector<std::string>& result);
+void vectorOfStringsToArrayOfCharArrays(std::vector<std::string>& list, char ***result);
 
 int main(int argc, char **argv){
     char *home = getenv("HOME");
@@ -66,6 +59,10 @@ int main(int argc, char **argv){
 
     std::vector<std::string> entry;
 
+
+
+    //figure out what should be printed here
+
     // prints FileType | FileName | FilePath | IconPath
     for (int i = 0; i < directoryContents.size(); i++){
         splitString(directoryContents[i], '|', entry);
@@ -75,7 +72,15 @@ int main(int argc, char **argv){
         std::cout << "\n";
     }
 
-
+    // int pid;
+    // pid = fork();
+    // if (pid == 0){
+    //     std::string xdgPath = "/user/bin/xdg-open";
+    //     std::vector<std::string> fileArgsVector = {xdgPath,"/home/hyim/test.png"};
+    //     char** fileArgs;
+    //     vectorOfStringsToArrayOfCharArrays(fileArgsVector, &fileArgs);
+    //     execv("/usr/bin/xdg-open", fileArgs);
+    // }
 
     // // initializing SDL as Video
     // SDL_Init(SDL_INIT_VIDEO);
@@ -87,7 +92,7 @@ int main(int argc, char **argv){
     // SDL_Window *window;
     // SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer);
  
-    // // initialize and perform rendering loop
+    // initialize and perform rendering loop
     // AppData data;
     // initialize(renderer, &data);
     // render(renderer, &data);
@@ -373,4 +378,16 @@ void splitString(std::string text, char d, std::vector<std::string>& result){
     {
         result.push_back(token);
     }
+}
+
+void vectorOfStringsToArrayOfCharArrays(std::vector<std::string>& list, char ***result){
+    int i;
+    int result_length = list.size() + 1;
+    *result = new char*[result_length];
+    for (i = 0; i < list.size(); i++)
+    {
+        (*result)[i] = new char[list[i].length() + 1];
+        strcpy((*result)[i], list[i].c_str());
+    }
+    (*result)[list.size()] = NULL;
 }
