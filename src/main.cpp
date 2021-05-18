@@ -20,11 +20,15 @@ typedef struct entry {
     SDL_Texture *file_name_t;
     SDL_Texture *icon_texture_t;
     SDL_Texture *file_size_t;
+    SDL_Texture *file_perm_t;
+    SDL_Texture *click_box_t;
 
     //rects
     SDL_Rect file_name_r;
     SDL_Rect icon_texture_r;
     SDL_Rect file_size_r;
+    SDL_Rect file_perm_r;
+    SDL_Rect click_box_r;
 } entry;
  
 typedef struct AppData {
@@ -55,6 +59,7 @@ void render(SDL_Renderer *renderer, AppData *data_ptr);
 void quit(AppData *data_ptr);
 std::vector<entry> initializeEntries(std::string dirPath, AppData *data_ptr, SDL_Renderer *renderer);
 std::string getFileType(std::string fileName);
+std::string getFilePerms(std::string fileName);
 
 void splitString(std::string text, char d, std::vector<std::string>& result);
 void vectorOfStringsToArrayOfCharArrays(std::vector<std::string>& list, char ***result);
@@ -63,16 +68,6 @@ std::string getFileSize(std::string path);
 int main(int argc, char **argv){
     char *home = getenv("HOME");
     printf("HOME: %s\n", home);    
-    
-    // int pid;
-    // pid = fork();
-    // if (pid == 0){
-    //     std::string xdgPath = "/user/bin/xdg-open";
-    //     std::vector<std::string> fileArgsVector = {xdgPath,"/home/hyim/test.png"};
-    //     char** fileArgs;
-    //     vectorOfStringsToArrayOfCharArrays(fileArgsVector, &fileArgs);
-    //     execv("/usr/bin/xdg-open", fileArgs);
-    // }
 
     // initializing SDL as Video
     SDL_Init(SDL_INIT_VIDEO);
@@ -97,33 +92,18 @@ int main(int argc, char **argv){
     {
         SDL_WaitEvent(&event);
         switch (event.type) {
-    //         case SDL_MOUSEMOTION:
-    //             if (data.penguin_selected)
-    //             {
-    //                 data.penguin_rect.x = event.motion.x - data.offset.x;
-    //                 data.penguin_rect.y = event.motion.y - data.offset.y;
-    //             }
-    //             else if (data.phrase_selected)
-    //             {
-    //                 data.phrase_rect.x = event.motion.x - data.offset.x;
-    //                 data.phrase_rect.y = event.motion.y - data.offset.y;
-    //             }
-    //             break;
             case SDL_MOUSEBUTTONDOWN:
                 for (int i = 0; i < data.entries.size(); i++){
                     if (data.item_selected == false && event.button.button == SDL_BUTTON_LEFT &&
-                    (event.button.x >= data.entries[i].icon_texture_r.x &&
-                    event.button.x <= data.entries[i].icon_texture_r.x + data.entries[i].icon_texture_r.w &&
-                    event.button.y >= data.entries[i].icon_texture_r.y &&
-                    event.button.y <= data.entries[i].icon_texture_r.y + data.entries[i].icon_texture_r.h))
+                    (event.button.x >= data.entries[i].click_box_r.x &&
+                    event.button.x <= data.entries[i].click_box_r.x + data.entries[i].click_box_r.w &&
+                    event.button.y >= data.entries[i].click_box_r.y &&
+                    event.button.y <= data.entries[i].click_box_r.y + data.entries[i].click_box_r.h))
                     {   
                         data.item_selected = true;
                         if (data.entries[i].type == "Directory" || data.entries[i].type == ".."){
-                            std::cout << "get here";
                             data.entries = initializeEntries(data.entries[i].path, &data, renderer);
-                            std::cout << data.entries.size() << "\n";
                         } else {
-                            std::cout << data.entries[i].path << "\n";
                             int pid;
                             pid = fork();
                             if (pid == 0){
@@ -136,43 +116,7 @@ int main(int argc, char **argv){
                         }
                     }
                 }
-                // if (event.button.button == SDL_BUTTON_LEFT &&
-                //     event.button.x >= data.phrase_rect.x &&
-                //     event.button.x <= data.phrase_rect.x + data.phrase_rect.w &&
-                //     event.button.y >= data.phrase_rect.y &&
-                //     event.button.y <= data.phrase_rect.y + data.phrase_rect.h)
-                // {
-                //     // data.phrase_selected = true;
-                //     // data.offset.x = event.button.x - data.phrase_rect.x;
-                //     // data.offset.y = event.button.y - data.phrase_rect.y;
-                // }
-                // else if (event.button.button == SDL_BUTTON_LEFT &&
-                //     event.button.x >= data.directory_rect.x &&
-                //     event.button.x <= data.directory_rect.x + data.directory_rect.w &&
-                //     event.button.y >= data.directory_rect.y &&
-                //     event.button.y <= data.directory_rect.y + data.directory_rect.h)
-                // {
-                //     std::vector<std::string> test = getDirectoryContentInfo(std::string("/home/hyim/Documents"));
 
-
-                //     std::vector<std::string> entry;
-
-
-
-                //     //figure out what should be printed here
-
-                //     // prints FileType | FileName | FilePath | IconPath
-                //     for (int i = 0; i < test.size(); i++){
-                //         splitString(test[i], '|', entry);
-                //         for (int j = 0; j < entry.size(); j++){
-                //             std::cout << entry[j] << " | ";
-                //         }
-                //         std::cout << "\n";
-                //     }
-                //     // data.penguin_selected = true;
-                //     // data.offset.x = event.button.x - data.penguin_rect.x;
-                //     // data.offset.y = event.button.y - data.penguin_rect.y;
-                // }
                 break;
             case SDL_MOUSEBUTTONUP:
                 data.item_selected = false;
@@ -229,16 +173,6 @@ void initialize(SDL_Renderer *renderer, AppData *data_ptr)
     data_ptr->arrow = SDL_CreateTextureFromSurface(renderer, arrowSurface);
     SDL_FreeSurface(arrowSurface);
 
-    // data_ptr->font = TTF_OpenFont("resrc/OpenSans-Regular.ttf", 24);
- 
-    // SDL_Surface *img_surf = IMG_Load("resrc/images/linux-penguin.png");
-    // data_ptr->penguin = SDL_CreateTextureFromSurface(renderer, img_surf);
-    // SDL_FreeSurface(img_surf);
-    // data_ptr->penguin_rect.x = 200;
-    // data_ptr->penguin_rect.y = 100;
-    // data_ptr->penguin_rect.w = 165;
-    // data_ptr->penguin_rect.h = 200;
-    // data_ptr->penguin_selected = false;
  
     data_ptr->top_bar.x = 0;
     data_ptr->top_bar.y = 0;
@@ -259,7 +193,7 @@ void initialize(SDL_Renderer *renderer, AppData *data_ptr)
     SDL_Surface *phrase_surf_size = TTF_RenderText_Solid(data_ptr->font, "Size", color);
     data_ptr->file_size_header_t = SDL_CreateTextureFromSurface(renderer, phrase_surf_size);
     SDL_FreeSurface(phrase_surf_size);
-    data_ptr->file_size_header_r.x = 630;
+    data_ptr->file_size_header_r.x = 550;
     data_ptr->file_size_header_r.y = 0;
     SDL_QueryTexture(data_ptr->file_size_header_t, NULL, NULL, &(data_ptr->file_size_header_r.w), &(data_ptr->file_size_header_r.h));
 
@@ -267,7 +201,7 @@ void initialize(SDL_Renderer *renderer, AppData *data_ptr)
     SDL_Surface *phrase_surf_perms = TTF_RenderText_Solid(data_ptr->font, "Perms", color);
     data_ptr->file_perms_header_t = SDL_CreateTextureFromSurface(renderer, phrase_surf_perms);
     SDL_FreeSurface(phrase_surf_perms);
-    data_ptr->file_perms_header_r.x = 710;
+    data_ptr->file_perms_header_r.x = 670;
     data_ptr->file_perms_header_r.y = 0;
     SDL_QueryTexture(data_ptr->file_perms_header_t, NULL, NULL, &(data_ptr->file_perms_header_r.w), &(data_ptr->file_perms_header_r.h));
 }
@@ -290,16 +224,15 @@ void render(SDL_Renderer *renderer, AppData *data_ptr)
     SDL_RenderCopy(renderer, data_ptr->file_perms_header_t, NULL, &(data_ptr->file_perms_header_r));
 
     for (int i = 0; i < data_ptr->entries.size(); i++){
-        SDL_RenderCopy(renderer, data_ptr->entries[i].icon_texture_t, NULL, &(data_ptr->entries[i].icon_texture_r));
         if (data_ptr->entries[i].type != ".."){
+            SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
+            SDL_RenderFillRect( renderer, &data_ptr->entries[i].click_box_r);
+            SDL_RenderCopy(renderer, data_ptr->entries[i].file_perm_t, NULL, &(data_ptr->entries[i].file_perm_r));
+            SDL_RenderCopy(renderer, data_ptr->entries[i].file_size_t, NULL, &(data_ptr->entries[i].file_size_r));
             SDL_RenderCopy(renderer, data_ptr->entries[i].file_name_t, NULL, &(data_ptr->entries[i].file_name_r));
         }
+        SDL_RenderCopy(renderer, data_ptr->entries[i].icon_texture_t, NULL, &(data_ptr->entries[i].icon_texture_r));
     }
-
-    // SDL_RenderCopy(renderer, data_ptr->directory, NULL, &(data_ptr->directory_rect));
-
-    // SDL_RenderCopy(renderer, data_ptr->entries[0].file_name_t, NULL, &(data_ptr->entries[0].file_name_r));
-    // SDL_RenderCopy(renderer, data_ptr->phrase, NULL, &(data_ptr->phrase_rect));
  
     // show rendered frame
     SDL_RenderPresent(renderer);
@@ -307,9 +240,18 @@ void render(SDL_Renderer *renderer, AppData *data_ptr)
  
 void quit(AppData *data_ptr)
 {
-    // ******************** DO THIS *************************************************
-    // SDL_DestroyTexture(data_ptr->penguin);
-    // SDL_DestroyTexture(data_ptr->phrase);
+    SDL_DestroyTexture(data_ptr->directory);
+    SDL_DestroyTexture(data_ptr->executable);
+    SDL_DestroyTexture(data_ptr->image);
+    SDL_DestroyTexture(data_ptr->video);
+    SDL_DestroyTexture(data_ptr->directory);
+    SDL_DestroyTexture(data_ptr->code);
+    SDL_DestroyTexture(data_ptr->other);
+    SDL_DestroyTexture(data_ptr->arrow);
+    SDL_DestroyTexture(data_ptr->file_name_header_t);
+    SDL_DestroyTexture(data_ptr->file_size_header_t);
+    SDL_DestroyTexture(data_ptr->file_perms_header_t);   
+
     TTF_CloseFont(data_ptr->font);
 }
 
@@ -401,14 +343,39 @@ std::vector<entry> initializeEntries(std::string dirPath, AppData *data_ptr, SDL
             entry.icon_texture_r.h = (int)(windowSize/size);
             entry.icon_texture_r.w = (int)(windowSize/size);
             SDL_Color color = { 0, 0, 0 };
-            SDL_Surface *phrase_surf = TTF_RenderText_Solid(data_ptr->font, fileName.c_str(), color);
-            entry.file_name_t = SDL_CreateTextureFromSurface(renderer, phrase_surf);
-            SDL_FreeSurface(phrase_surf);
+            SDL_Surface *phrase_surf_name = TTF_RenderText_Solid(data_ptr->font, fileName.c_str(), color);
+            entry.file_name_t = SDL_CreateTextureFromSurface(renderer, phrase_surf_name);
+            SDL_FreeSurface(phrase_surf_name);
             SDL_QueryTexture(entry.file_name_t, NULL, NULL, &(entry.file_name_r.w), &(entry.file_name_r.h));
             entry.file_name_r.w = (int)(entry.file_name_r.w / (size / 11));
             entry.file_name_r.h = (int)(entry.file_name_r.h / (size / 11));
             entry.file_name_r.x = (int)(startXPosition + (windowSize/size) + windowSize/size/2);
             entry.file_name_r.y = (int)(((indexEntry * windowSize/size)) + (windowSize/size/6) + barOffset);
+
+            entry.click_box_r.x = 0;
+            entry.click_box_r.y = (int)((indexEntry * windowSize/size) + barOffset);
+            entry.click_box_r.h = (int)(windowSize/size) - 2;
+            entry.click_box_r.w = 800;
+
+            SDL_Surface *phrase_surf_size = TTF_RenderText_Solid(data_ptr->font, getFileSize(filePath).c_str(), color);
+            entry.file_size_t = SDL_CreateTextureFromSurface(renderer, phrase_surf_size);
+            SDL_FreeSurface(phrase_surf_size);
+            SDL_QueryTexture(entry.file_size_t, NULL, NULL, &(entry.file_size_r.w), &(entry.file_size_r.h));
+            entry.file_size_r.w = (int)(entry.file_size_r.w / (size / 11));
+            entry.file_size_r.h = (int)(entry.file_size_r.h / (size / 11));
+            entry.file_size_r.x = 550;
+            entry.file_size_r.y = (int)(((indexEntry * windowSize/size)) + (windowSize/size/6) + barOffset);
+
+            SDL_Surface *phrase_surf_perm = TTF_RenderText_Solid(data_ptr->font, getFilePerms(filePath).c_str(), color);
+            entry.file_perm_t = SDL_CreateTextureFromSurface(renderer, phrase_surf_perm);
+            SDL_FreeSurface(phrase_surf_perm);
+            SDL_QueryTexture(entry.file_perm_t, NULL, NULL, &(entry.file_perm_r.w), &(entry.file_perm_r.h));
+            entry.file_perm_r.w = (int)(entry.file_perm_r.w / (size / 11));
+            entry.file_perm_r.h = (int)(entry.file_perm_r.h / (size / 11));
+            entry.file_perm_r.x = 660;
+            entry.file_perm_r.y = (int)(((indexEntry * windowSize/size)) + (windowSize/size/6) + barOffset);
+
+
 
             directoryEntries.push_back(entry);
             indexEntry = indexEntry + 1;
@@ -420,6 +387,13 @@ std::vector<entry> initializeEntries(std::string dirPath, AppData *data_ptr, SDL
             entry.icon_texture_r.y = 0;
             entry.icon_texture_r.h = 28;
             entry.icon_texture_r.w = 28;
+
+            entry.click_box_r.x = 10;
+            entry.click_box_r.y = 0;
+            entry.click_box_r.h = 28;
+            entry.click_box_r.w = 28;
+
+
             directoryEntries.push_back(entry);
         }
     }
@@ -447,6 +421,108 @@ std::string getFileType(std::string fileName){
         return std::string("ERROR: file extension error");
     }
 }
+
+void vectorOfStringsToArrayOfCharArrays(std::vector<std::string>& list, char ***result){
+    int i;
+    int result_length = list.size() + 1;
+    *result = new char*[result_length];
+    for (i = 0; i < list.size(); i++)
+    {
+        (*result)[i] = new char[list[i].length() + 1];
+        strcpy((*result)[i], list[i].c_str());
+    }
+    (*result)[list.size()] = NULL;
+}
+
+std::string getFileSize(std::string path){
+    struct stat file;
+    stat(path.c_str(), &file);
+
+    size_t size = file.st_size;
+    std::string sizeString;
+    if (size > 1073741824){
+        size = size / 1073741824;
+        sizeString = std::to_string(size) + " GiB";
+    } else if (size > 10480576){
+        size = size / 10480576;
+        sizeString = std::to_string(size) + " MiB";
+    } else if (size > 1024){
+        size = size / 1024;
+        sizeString = std::to_string(size) + " KiB";
+    } else {
+        sizeString = std::to_string(size) + " B";
+    }
+    return sizeString;
+
+
+}
+
+std::string getFilePerms(std::string path){
+    struct stat file;
+    stat(path.c_str(), &file);
+    std::string permString;
+
+    if (file.st_mode & S_IRUSR){
+        permString = permString + "r";
+    } else {
+        permString = permString + "-";
+    }
+
+    if (file.st_mode & S_IWUSR){
+        permString = permString + "w";
+    } else {
+        permString = permString + "-";
+    }
+
+    if (file.st_mode & S_IXUSR){
+        permString = permString + "x";
+    } else {
+        permString = permString + "-";
+    }
+
+    permString = permString + "-";
+
+    if (file.st_mode & S_IRGRP){
+        permString = permString + "r";
+    } else {
+        permString = permString + "-";
+    }
+
+    if (file.st_mode & S_IWGRP){
+        permString = permString + "w";
+    } else {
+        permString = permString + "-";
+    }
+
+    if (file.st_mode & S_IXGRP){
+        permString = permString + "x";
+    } else {
+        permString = permString + "-";
+    }
+
+    permString = permString + "-";
+
+    if (file.st_mode & S_IROTH){
+        permString = permString + "r";
+    } else {
+        permString = permString + "-";
+    }
+
+    if (file.st_mode & S_IWOTH){
+        permString = permString + "w";
+    } else {
+        permString = permString + "-";
+    }
+
+    if (file.st_mode & S_IXOTH){
+        permString = permString + "x";
+    } else {
+        permString = permString + "-";
+    }
+    return permString;
+}
+
+
 
 void splitString(std::string text, char d, std::vector<std::string>& result){
     enum states { NONE, IN_WORD, IN_STRING } state = NONE;
@@ -501,40 +577,5 @@ void splitString(std::string text, char d, std::vector<std::string>& result){
     {
         result.push_back(token);
     }
-}
-
-void vectorOfStringsToArrayOfCharArrays(std::vector<std::string>& list, char ***result){
-    int i;
-    int result_length = list.size() + 1;
-    *result = new char*[result_length];
-    for (i = 0; i < list.size(); i++)
-    {
-        (*result)[i] = new char[list[i].length() + 1];
-        strcpy((*result)[i], list[i].c_str());
-    }
-    (*result)[list.size()] = NULL;
-}
-
-std::string getFileSize(std::string path){
-    struct stat file;
-    stat(path.c_str(), &file);
-
-    size_t size = file.st_size;
-    std::string sizeString;
-    if (size > 1073741824){
-        size = size / 1073741824;
-        sizeString = std::to_string(size) + " GiB";
-    } else if (size > 10480576){
-        size = size / 10480576;
-        sizeString = std::to_string(size) + " MiB";
-    } else if (size > 1024){
-        size = size / 1024;
-        sizeString = std::to_string(size) + " KiB";
-    } else {
-        sizeString = std::to_string(size) + " B";
-    }
-    return sizeString;
-
-
 }
 
